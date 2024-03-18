@@ -4,11 +4,12 @@ copyright "Copyright © 2016, Taichi Tomioka; Copyright © 2024, Chance Snow"
 authors "Taichi Tomioka" "Chance Snow"
 license "MIT"
 
-targetName "D-GLSL"
-targetType "staticLibrary"
-
 dependency "gfm" version="~>8.0.6"
 
+configuration "library" {
+	targetName "D-GLSL"
+	targetType "staticLibrary"
+}
 configuration "unittest" {
 	libs "gl" platform="posix"
 	stringImportPaths "./"
