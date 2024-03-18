@@ -126,6 +126,10 @@ mixin template Compute() {
 }
 
 
+string toGlsl(T : ShaderBase)(T shader) {
+    return dtoglsl!(T);
+}
+
 void compile(T : ShaderBase)(T shader) {
     static if (T.type == "vertex")
         GLuint id = glCreateShader(GL_VERTEX_SHADER);
@@ -140,16 +144,14 @@ void compile(T : ShaderBase)(T shader) {
     static if (T.type == "compute")
         GLuint id = glCreateShader(GL_GEOMETRY_SHADER);
 
-    auto src = dtoglsl!(T).toStringz;
+    auto src = shader.toGlsl!T.toStringz;
     shader._shaderid = id;
     glShaderSource(id, 1, &src, null);
     glCompileShader(id);
 
     GLint compiled;
     glGetShaderiv(shader._shaderid, GL_COMPILE_STATUS, &compiled);
-    if (compiled == GL_FALSE) {
-        throw new Exception(infoLog(shader));
-    }
+    if (!compiled) throw new Exception(shader.infoLog);
 }
 
 /*
