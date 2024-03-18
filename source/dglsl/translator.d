@@ -14,7 +14,7 @@ import dglsl.shader;
 string dtoglsl(Shader)() if (Shader.type == "vertex") {
     string result = "#version %s\n".format(Shader.glslVersion);
     string[] functions;
-    
+
     foreach (immutable s; __traits(derivedMembers, Shader)) {
         static if (!hasUDA!(__traits(getMember, Shader, s), ignore)) {
             static if(is(typeof(__traits(getMember, Shader, s)) == function)) {
@@ -40,7 +40,7 @@ string dtoglsl(Shader)() if (Shader.type == "vertex") {
             }
         }
     }
-    
+
     result ~= copyFunctions!(Shader.filepath, Shader.lineno)(functions);
 
     return result;
@@ -49,7 +49,7 @@ string dtoglsl(Shader)() if (Shader.type == "vertex") {
 string dtoglsl(Shader)() if (Shader.type == "fragment") {
     string result = "#version %s\n".format(Shader.glslVersion);
     string[] functions;
-    
+
     foreach (immutable s; __traits(derivedMembers, Shader)) {
         static if (!hasUDA!(__traits(getMember, Shader, s), ignore)) {
             static if(is(typeof(__traits(getMember, Shader, s)) == function)) {
@@ -75,7 +75,7 @@ string dtoglsl(Shader)() if (Shader.type == "fragment") {
             }
         }
     }
-    
+
 
     result ~= copyFunctions!(Shader.filepath, Shader.lineno)(functions);
 
@@ -159,13 +159,13 @@ private string copyFunctions(string filepath, int lineno)(string[] functions) {
                 result ~= source.front ~ "\n";
                 source.popFront();
             }
-            
+
             continue;
         }
 
         if (line.canFind('{')) level++;
         if (line.canFind('}')) level--;
-        
+
         source.popFront();
     }
 

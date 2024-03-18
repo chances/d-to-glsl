@@ -146,7 +146,7 @@ void compile(T : ShaderBase)(T shader) {
     shader._shaderid = id;
     glShaderSource(id, 1, &src, null);
     glCompileShader(id);
-    
+
     GLint compiled;
     glGetShaderiv(shader._shaderid, GL_COMPILE_STATUS, &compiled);
     if (compiled == GL_FALSE) {
@@ -156,20 +156,23 @@ void compile(T : ShaderBase)(T shader) {
 
 /*
 ** プログラムの情報を表示する
-** ref: http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090827
+** English: Retrieve program information.
+** See_Also: http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090827
 */
 string infoLog(T : ShaderBase)(T shader) {
     GLsizei bufSize;
 
     /* シェーダのコンパイル時のログの長さを取得する */
+    // Get log length when linking shader
     glGetShaderiv(shader._shaderid, GL_INFO_LOG_LENGTH , &bufSize);
 
     if (bufSize == 0) return "";
-    
+
     GLchar[] infoLog = new GLchar[](bufSize);
     GLsizei length;
 
     /* シェーダのコンパイル時のログの内容を取得する */
+    // Get the contents of the log when linking a shader
     glGetShaderInfoLog(shader._shaderid, bufSize, &length, infoLog.ptr);
     return format("InfoLog:\n%s\n", infoLog);
 }

@@ -38,13 +38,15 @@ class Program(T...) {
 
 /*
 ** プログラムの情報を表示する
-** from: http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090827
+** English: Retrieve program information.
+** See_Also: http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090827
 */
 string infoLog(T...)(Program!T p)
 {
     GLsizei bufSize;
 
     /* シェーダのリンク時のログの長さを取得する */
+    // Get log length when linking shader
     glGetProgramiv(p.id, GL_INFO_LOG_LENGTH , &bufSize);
 
     if (bufSize == 0) return "";
@@ -53,6 +55,7 @@ string infoLog(T...)(Program!T p)
     GLsizei length;
 
     /* シェーダのリンク時のログの内容を取得する */
+    // Get the contents of the log when linking a shader
     glGetProgramInfoLog(p.id, bufSize, &length, infoLog.ptr);
     return format("InfoLog:\n%s\n", infoLog);
 }
