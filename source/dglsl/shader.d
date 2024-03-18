@@ -1,9 +1,9 @@
-
 module dglsl.shader;
 
 import std.string;
 import std.conv;
 
+import opengl;
 import dglsl.type;
 import dglsl.sampler;
 import dglsl.translator;
@@ -54,13 +54,13 @@ string layout_attributes(T...)() {
     }
     return lst.join(",");
 }
+
 auto layout(T...)(T args) {
     mixin("Layout l = {" ~ layout_attributes!T ~ "};");
     return l;
 }
 @property auto max_vertices(int i) { return MaxVertices(i); }
 @property auto location(int i) { return Location(i); }
-
 
 class Shader(alias Type, int _version = 330, string file = __FILE__, int line = __LINE__) : ShaderBase {
     static immutable glslVersion = _version;
@@ -173,4 +173,49 @@ string infoLog(T : ShaderBase)(T shader) {
     // Get the contents of the log when linking a shader
     glGetShaderInfoLog(shader._shaderid, bufSize, &length, infoLog.ptr);
     return format("InfoLog:\n%s\n", infoLog);
+}
+
+extern (C) {
+	GLuint glCreateShader(GLenum shaderType);
+	void glCompileShader(GLuint shader);
+	void glGetShaderiv(GLuint shader, GLenum pname, GLint *params);
+	void glGetShaderInfoLog(GLuint shader,
+  	GLsizei maxLength,
+  	GLsizei *length,
+  	GLchar *infoLog);
+  void glShaderSource(GLuint shader,
+  	GLsizei count,
+  	const GLchar **string,
+  	const GLint *length);
+}
+
+unittest {
+	class VertShader : Shader!Vertex {
+		@layout(location = 0)
+		@input vec3 position;
+
+		@layout(location = 1)
+		@input vec3 color;
+
+		@output vec3 vertColor;
+
+		@uniform mat4 projectionMatrix;
+
+		void main() {
+			vertColor = color;
+			gl_Position = projectionMatrix * vec4(position, 1.0);
+		}
+	}
+
+	class FragShader : Shader!Fragment {
+		@input vec3 vertColor;
+		@output vec3 fragColor;
+
+		void main() {
+			fragColor = vec3(vertColor);
+		}
+	}
+
+	new VertShader().toGlsl;
+	new FragShader().toGlsl;
 }

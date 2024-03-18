@@ -5,6 +5,7 @@ import std.string;
 
 import gfm.math : Vector, Matrix;
 
+import opengl;
 import dglsl.gspl;
 import dglsl.shader;
 
