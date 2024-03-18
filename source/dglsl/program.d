@@ -3,12 +3,10 @@ module dglsl.program;
 
 import std.string;
 
-import derelict.opengl3.gl3;
-import gl3n.linalg : Vector, Matrix;
+import gfm.math : Vector, Matrix;
 
 import dglsl.gspl;
 import dglsl.shader;
-
 
 class Program(T...) {
     private GLuint _programid;

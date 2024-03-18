@@ -4,8 +4,6 @@ module dglsl.shader;
 import std.string;
 import std.conv;
 
-import derelict.opengl3.gl3;
-
 import dglsl.type;
 import dglsl.sampler;
 import dglsl.translator;

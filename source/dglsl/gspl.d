@@ -1,13 +1,15 @@
 
 module dglsl.gspl;
 
-import derelict.opengl3.gl3;
-
+import gfm.math;
 import std.string;
 
+import opengl;
+import dglsl.gl;
 import dglsl.type;
 
-/// glUniform
+/// Section: `glUniform` overloads
+
 void glUniform(GLint location, GLfloat v0) {
 	glUniform1f(location, v0);
 }
@@ -97,46 +99,53 @@ void glUniform(int column, int row)(GLint location, Matrix!(float, column, row) 
 	mixin(`glUniformMatrix%dx%dfv(location, 1, transpose, m.value_ptr);`.format(column, row));
 }
 
-
-enum GLErrorCode {
-	noError = GL_NO_ERROR,
-	invalidEnum = GL_INVALID_ENUM,
-	invalidValue = GL_INVALID_VALUE,
-	invalidOperation = GL_INVALID_OPERATION,
-	invalidFramebufferOperation = GL_INVALID_FRAMEBUFFER_OPERATION,
-	outOfMemory = GL_OUT_OF_MEMORY,
-}
-
-
 // glGetError
 void glCheckError(string file = __FILE__, int line = __LINE__) {
-	debug final switch (cast(GLErrorCode)(glGetError())) {
-		case GLErrorCode.noError:
+	debug final switch (glGetError()) {
+		case ErrorCode.noError:
 			break;
-		case GLErrorCode.invalidEnum:
+		case ErrorCode.invalidEnum:
 			throw new Exception("Invalid enum error: An unacceptable value is specified for an enumerated argument.", file, line);
-		case GLErrorCode.invalidValue:
+			break;
+		case ErrorCode.invalidValue:
 			throw new Exception("Invalid value error: A numeric argument is out of range.", file, line);
-		case GLErrorCode.invalidOperation:
+			break;
+		case ErrorCode.invalidOperation:
 			throw new Exception("Invalid operation error: The specified operation is not allowed in the current state.", file, line);
-		case GLErrorCode.invalidFramebufferOperation:
+			break;
+		case ErrorCode.stackOverflow:
+			// TODO: Add error description
+			throw new Exception("Stack underflow error", file, line);
+			break;
+		case ErrorCode.stackUnderflow:
+			// TODO: Add error description
+			throw new Exception("Stack underflow error", file, line);
+			break;
+		case ErrorCode.invalidFramebufferOperation:
 			throw new Exception("Invalid framebuffer operation error: The framebuffer object is not complete.", file, line);
-		case GLErrorCode.outOfMemory:
+			break;
+		case ErrorCode.outOfMemory:
 			throw new Exception("Out of memory error: There is not enough memory left to execute the command.", file, line);
+			break;
+		case ErrorCode.contextLost:
+			throw new Exception("Lost context error: The graphics context was lost.", file, line);
+			break;
+		case ErrorCode.tableTooLarge:
+			// TODO: Add error description
+			throw new Exception("Table too large error", file, line);
 	}
 }
-
 
 // opengl device information
 void glShowInfo() {
 	import std.stdio;
 	import std.conv;
 	GLint i;
-	
-	writefln("Version: %s", glGetString(GL_VERSION).to!string);
-	writefln("Vendor: %s", glGetString(GL_VENDOR).to!string);
-	writefln("Renderer: %s", glGetString(GL_RENDERER).to!string);
-	writefln("GLSL Version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION).to!string);
+
+	writefln("Version: %s", glGetString(GlString.version_).to!string);
+	writefln("Vendor: %s", glGetString(GlString.version_).to!string);
+	writefln("Renderer: %s", glGetString(GlString.renderer).to!string);
+	writefln("GLSL Version: %s", glGetString(GlString.shadingLanguageVersion).to!string);
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &i);
 	writefln("Max texture size (RGBA32): %d * %d", i / 4, i / 4);

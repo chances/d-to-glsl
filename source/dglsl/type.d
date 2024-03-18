@@ -3,23 +3,23 @@ module dglsl.type;
 
 import std.traits;
 
-public import gl3n.linalg : Vector, Matrix;
+public import gfm.math : Vector, Matrix;
 
+public import opengl;
 import dglsl.sampler;
-
 
 alias vec2  = Vector!(float, 2);
 alias ivec2 = Vector!(int,   2);
 alias uvec2 = Vector!(uint,  2);
-alias bvec2 = Vector!(ubyte,  2); // this should be bool?
+alias bvec2 = Vector!(ubyte,  2); // FIXME: this should be bool?
 alias vec3  = Vector!(float, 3);
 alias ivec3 = Vector!(int,   3);
 alias uvec3 = Vector!(uint,  3);
-alias bvec3 = Vector!(ubyte,  3); // this should be bool?
+alias bvec3 = Vector!(ubyte,  3); // FIXME: this should be bool?
 alias vec4  = Vector!(float, 4);
 alias ivec4 = Vector!(int,   4);
 alias uvec4 = Vector!(uint,  4);
-alias bvec4 = Vector!(ubyte,  4); // this should be bool?
+alias bvec4 = Vector!(ubyte,  4); // FIXME: this should be bool?
 
 alias mat2x2 = Matrix!(float, 2, 2);
 alias mat2x3 = Matrix!(float, 2, 3);
@@ -33,6 +33,21 @@ alias mat4x4 = Matrix!(float, 4, 4);
 alias mat2 = mat2x2;
 alias mat3 = mat3x3;
 alias mat4 = mat4x4;
+
+/// See_Also: https://www.khronos.org/opengl/wiki/OpenGL_Error#Meaning_of_errors
+enum ErrorCode {
+	noError = 0,
+	invalidEnum = 0x0500,
+	invalidValue = 0x0501,
+	invalidOperation = 0x0502,
+	stackOverflow = 0x0503,
+	stackUnderflow = 0x0504,
+	outOfMemory = 0x0505,
+	invalidFramebufferOperation = 0x0506,
+	/// Available with OpenGL 4.5 or `ARB_KHR_robustness`.
+	contextLost = 0x0507,
+	tableTooLarge = 0x8031
+}
 
 string glslType(T)() {
     static if (is(T == vec2)) return "vec2";
